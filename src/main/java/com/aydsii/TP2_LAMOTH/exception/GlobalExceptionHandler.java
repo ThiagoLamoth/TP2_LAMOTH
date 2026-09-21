@@ -90,4 +90,10 @@ public class GlobalExceptionHandler {
         RespuestaApi<Object> respuesta = new RespuestaApi<>(400, ex.getMessage(), null);
         return ResponseEntity.status(400).body(respuesta);
     }
+
+    @ExceptionHandler(StockInvalidoException.class)
+    public ResponseEntity<RespuestaApi<Object>> handleStockInvalido(StockInvalidoException ex) {
+        RespuestaApi<Object> respuesta = new RespuestaApi<>(400, ex.getMessage(), null);
+        return ResponseEntity.status(400).body(respuesta);
+    }
 }
