@@ -96,4 +96,23 @@ public class GlobalExceptionHandler {
         RespuestaApi<Object> respuesta = new RespuestaApi<>(400, ex.getMessage(), null);
         return ResponseEntity.status(400).body(respuesta);
     }
+
+    @ExceptionHandler(ParametrosInvalidosException.class)
+    public ResponseEntity<RespuestaApi<Object>> handleParametrosInvalidos(ParametrosInvalidosException ex) {
+        RespuestaApi<Object> respuesta = new RespuestaApi<>(400, ex.getMessage(), null);
+        return ResponseEntity.status(400).body(respuesta);
+    }
+
+    @ExceptionHandler(MonedaInvalidaException.class)
+    public ResponseEntity<RespuestaApi<Object>> handleMonedaInvalida(MonedaInvalidaException ex) {
+        RespuestaApi<Object> respuesta = new RespuestaApi<>(400, ex.getMessage(), null);
+        return ResponseEntity.status(400).body(respuesta);
+    }
+
+    @ExceptionHandler(ServicioExternoException.class)
+    public ResponseEntity<RespuestaApi<Object>> handleServicioExterno(ServicioExternoException ex) {
+        RespuestaApi<Object> respuesta = new RespuestaApi<>(502, ex.getMessage(), null);
+        return ResponseEntity.status(502).body(respuesta);
+    }
+
 }
