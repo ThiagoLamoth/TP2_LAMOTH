@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.http.ResponseEntity;
@@ -33,25 +32,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<RespuestaApi<List<Map<String, Object>>>> handleValidation(MethodArgumentNotValidException ex) {
-        List<Map<String, Object>> errores = new ArrayList<>();
+    public ResponseEntity<RespuestaApi<Map<String, String>>> handleValidation(MethodArgumentNotValidException ex) {
+        Map<String, String> errores = new LinkedHashMap<>();
 
         for (FieldError fe : ex.getBindingResult().getFieldErrors()) {
-            Map<String, Object> error = new LinkedHashMap<>();
-            Matcher m = PATRON_INDICE.matcher(fe.getField());
-
-            if (m.matches()) {
-                error.put("posicion", Integer.parseInt(m.group(1)));
-                error.put("campo", m.group(2));
-            } else {
-                error.put("campo", fe.getField());
-            }
-            error.put("motivo", fe.getDefaultMessage());
-            errores.add(error);
+            errores.putIfAbsent(fe.getField(), fe.getDefaultMessage());
         }
 
-        RespuestaApi<List<Map<String, Object>>> respuesta =
-                new RespuestaApi<>(400, "Error de validación en la lista de ventas", errores);
+        RespuestaApi<Map<String, String>> respuesta = new RespuestaApi<>(400, "Error de validacion", errores);
         return ResponseEntity.status(400).body(respuesta);
     }
 
@@ -113,6 +101,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<RespuestaApi<Object>> handleServicioExterno(ServicioExternoException ex) {
         RespuestaApi<Object> respuesta = new RespuestaApi<>(502, ex.getMessage(), null);
         return ResponseEntity.status(502).body(respuesta);
+    }
+
+    @ExceptionHandler(EmailDuplicadoException.class)
+    ResponseEntity<RespuestaApi<Object>> handleEmailDuplicado(EmailDuplicadoException ex) {
+        RespuestaApi<Object> respuesta = new RespuestaApi<>(400, ex.getMessage(), null);
+        return ResponseEntity.status(400).body(respuesta);
     }
 
 }
